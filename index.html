@@ -933,10 +933,30 @@
 <section class="shop watches-section">
   <div class="watches-header">
     <span class="watches-eyebrow">Timepieces</span>
-    <h2 class="section-title">The Watch Collection</h2>
+    <h2 class="section-title">The Watches Collection</h2>
     <div class="watches-rule"></div>
   </div>
   <div class="grid" id="watchGrid"></div>
+</section>
+
+<!-- SHOES SECTION -->
+<section class="shop watches-section">
+  <div class="watches-header">
+    <span class="watches-eyebrow">Streetwear</span>
+    <h2 class="section-title">The Shoes Collection</h2>
+    <div class="watches-rule"></div>
+  </div>
+  <div class="grid" id="shoesGrid"></div>
+</section>
+
+<!-- PERFUME SECTION -->
+<section class="shop watches-section">
+  <div class="watches-header">
+    <span class="watches-eyebrow">Fragrance</span>
+    <h2 class="section-title">The Perfumes Collection</h2>
+    <div class="watches-rule"></div>
+  </div>
+  <div class="grid" id="perfumeGrid"></div>
 </section>
 
 <!-- FOOTER -->
@@ -1271,7 +1291,7 @@ function renderProducts(filter) {
   const grid = document.getElementById('productGrid');
   let list;
   if (filter === 'all') {
-    list = PRODUCTS.filter(p => p.category !== 'Watches');
+    list = PRODUCTS.filter(p => !['Watches','Casual','Perfume'].includes(p.category));
   } else {
     list = PRODUCTS.filter(p => p.category === filter);
   }
@@ -1288,6 +1308,20 @@ function renderProducts(filter) {
 function renderWatches() {
   const grid = document.getElementById('watchGrid');
   const list = PRODUCTS.filter(p => p.category === 'Watches');
+  grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
+}
+
+// ====== SHOES RENDER ======
+function renderShoes() {
+  const grid = document.getElementById('shoesGrid');
+  const list = PRODUCTS.filter(p => p.category === 'Casual');
+  grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
+}
+
+// ====== PERFUME RENDER ======
+function renderPerfume() {
+  const grid = document.getElementById('perfumeGrid');
+  const list = PRODUCTS.filter(p => p.category === 'Perfume');
   grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
 }
 
@@ -1326,6 +1360,8 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 // ====== INIT ======
 renderProducts('all');
 renderWatches();
+renderShoes();
+renderPerfume();
 updateBadges();
 </script>
 </body>
