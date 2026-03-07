@@ -852,6 +852,37 @@
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* WATCHES SECTION */
+  .watches-section {
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+  .watches-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.4;
+  }
+  .watches-header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .watches-eyebrow {
+    display: block;
+    font-size: 9.5px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .watches-rule {
+    width: 56px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 14px auto 0;
+  }
 </style>
 </head>
 <body>
@@ -890,11 +921,22 @@
     <div class="filters">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="Electronics">AirPods</button>
+      <button class="filter-btn" data-filter="Watches">Watches</button>
       <button class="filter-btn" data-filter="Casual">Shoes</button>
       <button class="filter-btn" data-filter="Perfume">Perfume</button>
     </div>
   </div>
   <div class="grid" id="productGrid"></div>
+</section>
+
+<!-- WATCHES SECTION -->
+<section class="shop watches-section">
+  <div class="watches-header">
+    <span class="watches-eyebrow">Timepieces</span>
+    <h2 class="section-title">The Watch Collection</h2>
+    <div class="watches-rule"></div>
+  </div>
+  <div class="grid" id="watchGrid"></div>
 </section>
 
 <!-- FOOTER -->
@@ -951,7 +993,7 @@ const PRODUCTS = [
     id: 2,
     name: "Watch Series 10",
     price: 2499,
-    category: "Electronics",
+    category: "Watches",
     image: "https://i.ibb.co/q3BG6FKm/download-12.jpg",
     desc: "Rose Gold 46mm GPS smartwatch — sleek, powerful, and built for the modern lifestyle. Premium on your wrist."
   },
@@ -959,7 +1001,7 @@ const PRODUCTS = [
     id: 3,
     name: "Watch Series 10",
     price: 2499,
-    category: "Electronics",
+    category: "Watches",
     image: "https://i.ibb.co/84YcjYj2/Apple-Watch-Series-10-GPS-46mm-case-Smartwatch-with-Jet-Black-Aluminum-Case-with-Black-Sport-Band.jpg",
     desc: "Jet Black 46mm GPS smartwatch — sleek, powerful, and built for the modern lifestyle. Premium on your wrist."
   },
@@ -1227,14 +1269,31 @@ function showSuccess(name) {
 // ====== PRODUCTS RENDER ======
 function renderProducts(filter) {
   const grid = document.getElementById('productGrid');
-  const list = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === filter);
+  let list;
+  if (filter === 'all') {
+    list = PRODUCTS.filter(p => p.category !== 'Watches');
+  } else {
+    list = PRODUCTS.filter(p => p.category === filter);
+  }
 
   if (!list.length) {
     grid.innerHTML = '<div class="no-results">No products in this category.</div>';
     return;
   }
 
-  grid.innerHTML = list.map((p, i) => `
+  grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
+}
+
+// ====== WATCHES RENDER ======
+function renderWatches() {
+  const grid = document.getElementById('watchGrid');
+  const list = PRODUCTS.filter(p => p.category === 'Watches');
+  grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
+}
+
+// ====== CARD BUILDER ======
+function buildCard(p, i) {
+  return `
     <div class="card" style="animation-delay:${i * 0.09}s">
       <div class="card-img-wrap">
         <img src="${p.image}" alt="${p.name} — LuxeVault" loading="lazy">
@@ -1252,7 +1311,7 @@ function renderProducts(filter) {
           }
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
 }
 
 // ====== FILTERS ======
@@ -1266,6 +1325,7 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 
 // ====== INIT ======
 renderProducts('all');
+renderWatches();
 updateBadges();
 </script>
 </body>
