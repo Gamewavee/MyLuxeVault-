@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "name": "AirPods Pro 2",
+    "description": "Next-gen noise cancellation with adaptive audio and USB-C charging",
+    "price": 2999,
+    "category": "Electronics",
+    "image": "https://i.ibb.co/RGZZFygS/063bf3941bfbf0335092dae23ea23c3c.jpg",
+    "emoji": "🎧",
+    "badge": "Bestseller",
+    "visible": true
+  },
+  {
+    "id": 2,
+    "name": "Watch Series 10",
+    "description": "Thinnest Apple Watch ever with advanced health tracking and always-on display",
+    "price": 2499,
+    "category": "Electronics",
+    "image": "https://i.ibb.co/q3BG6FKm/download-12.jpg",
+    "emoji": "⌚",
+    "badge": "New Arrival",
+    "visible": true
+  },
+  {
+    "id": 3,
+    "name": "5000mAh MagSafe PowerBank",
+    "description": "Slim MagSafe-compatible wireless powerbank with 15W fast charging",
+    "price": 899,
+    "category": "Electronics",
+    "image": "https://i.ibb.co/FG1S13B/Power-Bank-i-Phone-Carregador-Port-til-Turbo-Mag-Safe-Profissional-Potente-5000m-Ah.jpg",
+    "emoji": "🔋",
+    "badge": "Hot Deal",
+    "visible": true
+  },
+  {
+    "id": 4,
+    "name": "AirPods Pro 2 + Watch Series 10",
+    "description": "The ultimate Apple lifestyle combo — audio and wellness in one package",
+    "price": 4999,
+    "category": "Electronics",
+    "image": "https://i.ibb.co/84YcjYj2/Apple-Watch-Series-10-GPS-46mm-case-Smartwatch-with-Jet-Black-Aluminum-Case-with-Black-Sport-Band.jpg",
+    "emoji": "🎁",
+    "badge": "Combo",
+    "visible": true
+  },
+]
