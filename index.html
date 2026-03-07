@@ -853,18 +853,22 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* WATCHES SECTION */
-  .watches-section {
+  /* CATEGORY SECTIONS */
+  .category-section {
     border-top: 1px solid var(--border);
     position: relative;
+    transition: opacity 0.3s ease;
   }
-  .watches-section::before {
+  .category-section::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     opacity: 0.4;
+  }
+  .category-section.hidden {
+    display: none;
   }
   .watches-header {
     text-align: center;
@@ -882,6 +886,11 @@
     width: 56px; height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     margin: 14px auto 0;
+  }
+
+  /* Main collection section hidden state */
+  #mainCollectionSection.hidden {
+    display: none;
   }
 </style>
 </head>
@@ -914,10 +923,10 @@
   </div>
 </section>
 
-<!-- SHOP -->
-<section class="shop">
+<!-- FILTERS BAR (always visible) -->
+<section class="shop" style="padding-bottom: 0;">
   <div class="section-header">
-    <h2 class="section-title">The Collection</h2>
+    <h2 class="section-title" id="collectionTitle">The Collection</h2>
     <div class="filters">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="Electronics">AirPods</button>
@@ -926,11 +935,15 @@
       <button class="filter-btn" data-filter="Perfume">Perfume</button>
     </div>
   </div>
+</section>
+
+<!-- MAIN COLLECTION GRID (AirPods + MagSafe — shown on "All") -->
+<section class="shop" id="mainCollectionSection" style="padding-top: 24px;">
   <div class="grid" id="productGrid"></div>
 </section>
 
 <!-- WATCHES SECTION -->
-<section class="shop watches-section">
+<section class="shop category-section" id="watchesSection">
   <div class="watches-header">
     <span class="watches-eyebrow">Timepieces</span>
     <h2 class="section-title">The Watches Collection</h2>
@@ -940,7 +953,7 @@
 </section>
 
 <!-- SHOES SECTION -->
-<section class="shop watches-section">
+<section class="shop category-section" id="shoesSection">
   <div class="watches-header">
     <span class="watches-eyebrow">Streetwear</span>
     <h2 class="section-title">The Shoes Collection</h2>
@@ -950,7 +963,7 @@
 </section>
 
 <!-- PERFUME SECTION -->
-<section class="shop watches-section">
+<section class="shop category-section" id="perfumeSection">
   <div class="watches-header">
     <span class="watches-eyebrow">Fragrance</span>
     <h2 class="section-title">The Perfumes Collection</h2>
@@ -1009,7 +1022,7 @@ const PRODUCTS = [
     image: "https://i.ibb.co/BVmVDcJC/download-14.jpg",
     desc: "Standard ANC, Og Premium Packaging, Lightning & C-Type, PopUp Feature, Active Noice Cancellation & Transparancy Modes"
   },
-    {
+  {
     id: 2,
     name: "AirPods Pro 2",
     price: 3499,
@@ -1050,7 +1063,7 @@ const PRODUCTS = [
     desc: "Bandana colourway — where streetwear culture meets luxury sneaker craft. Exclusive and iconic.",
     comingSoon: true
   },
-    {
+  {
     id: 7,
     name: "Nike Airforce 1 Low, The North Face",
     price: 6199,
@@ -1321,45 +1334,6 @@ function showSuccess(name) {
     </div>`;
 }
 
-// ====== PRODUCTS RENDER ======
-function renderProducts(filter) {
-  const grid = document.getElementById('productGrid');
-  let list;
-  if (filter === 'all') {
-    list = PRODUCTS.filter(p => !['Watches','Casual','Perfume'].includes(p.category));
-  } else {
-    list = PRODUCTS.filter(p => p.category === filter);
-  }
-
-  if (!list.length) {
-    grid.innerHTML = '<div class="no-results">No products in this category.</div>';
-    return;
-  }
-
-  grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
-}
-
-// ====== WATCHES RENDER ======
-function renderWatches() {
-  const grid = document.getElementById('watchGrid');
-  const list = PRODUCTS.filter(p => p.category === 'Watches');
-  grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
-}
-
-// ====== SHOES RENDER ======
-function renderShoes() {
-  const grid = document.getElementById('shoesGrid');
-  const list = PRODUCTS.filter(p => p.category === 'Casual');
-  grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
-}
-
-// ====== PERFUME RENDER ======
-function renderPerfume() {
-  const grid = document.getElementById('perfumeGrid');
-  const list = PRODUCTS.filter(p => p.category === 'Perfume');
-  grid.innerHTML = list.map((p, i) => buildCard(p, i)).join('');
-}
-
 // ====== CARD BUILDER ======
 function buildCard(p, i) {
   return `
@@ -1383,20 +1357,77 @@ function buildCard(p, i) {
     </div>`;
 }
 
-// ====== FILTERS ======
+// ====== FILTER LOGIC ======
+// Section refs
+const mainSection    = document.getElementById('mainCollectionSection');
+const watchesSection = document.getElementById('watchesSection');
+const shoesSection   = document.getElementById('shoesSection');
+const perfumeSection = document.getElementById('perfumeSection');
+
+function applyFilter(filter) {
+  if (filter === 'all') {
+    // Show top grid with Electronics only (AirPods + MagSafe)
+    const elecProducts = PRODUCTS.filter(p => p.category === 'Electronics');
+    document.getElementById('productGrid').innerHTML = elecProducts.map((p, i) => buildCard(p, i)).join('');
+    mainSection.classList.remove('hidden');
+    watchesSection.classList.remove('hidden');
+    shoesSection.classList.remove('hidden');
+    perfumeSection.classList.remove('hidden');
+
+  } else if (filter === 'Electronics') {
+    const list = PRODUCTS.filter(p => p.category === 'Electronics');
+    document.getElementById('productGrid').innerHTML = list.map((p, i) => buildCard(p, i)).join('');
+    mainSection.classList.remove('hidden');
+    watchesSection.classList.add('hidden');
+    shoesSection.classList.add('hidden');
+    perfumeSection.classList.add('hidden');
+
+  } else if (filter === 'Watches') {
+    document.getElementById('watchGrid').innerHTML =
+      PRODUCTS.filter(p => p.category === 'Watches').map((p, i) => buildCard(p, i)).join('');
+    mainSection.classList.add('hidden');
+    watchesSection.classList.remove('hidden');
+    shoesSection.classList.add('hidden');
+    perfumeSection.classList.add('hidden');
+
+  } else if (filter === 'Casual') {
+    document.getElementById('shoesGrid').innerHTML =
+      PRODUCTS.filter(p => p.category === 'Casual').map((p, i) => buildCard(p, i)).join('');
+    mainSection.classList.add('hidden');
+    watchesSection.classList.add('hidden');
+    shoesSection.classList.remove('hidden');
+    perfumeSection.classList.add('hidden');
+
+  } else if (filter === 'Perfume') {
+    document.getElementById('perfumeGrid').innerHTML =
+      PRODUCTS.filter(p => p.category === 'Perfume').map((p, i) => buildCard(p, i)).join('');
+    mainSection.classList.add('hidden');
+    watchesSection.classList.add('hidden');
+    shoesSection.classList.add('hidden');
+    perfumeSection.classList.remove('hidden');
+  }
+}
+
+// ====== FILTER BUTTONS ======
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', function() {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     this.classList.add('active');
-    renderProducts(this.dataset.filter);
+    applyFilter(this.dataset.filter);
   });
 });
 
 // ====== INIT ======
-renderProducts('all');
-renderWatches();
-renderShoes();
-renderPerfume();
+// Pre-render all grids so they're ready
+document.getElementById('productGrid').innerHTML =
+  PRODUCTS.filter(p => p.category === 'Electronics').map((p, i) => buildCard(p, i)).join('');
+document.getElementById('watchGrid').innerHTML =
+  PRODUCTS.filter(p => p.category === 'Watches').map((p, i) => buildCard(p, i)).join('');
+document.getElementById('shoesGrid').innerHTML =
+  PRODUCTS.filter(p => p.category === 'Casual').map((p, i) => buildCard(p, i)).join('');
+document.getElementById('perfumeGrid').innerHTML =
+  PRODUCTS.filter(p => p.category === 'Perfume').map((p, i) => buildCard(p, i)).join('');
+
 updateBadges();
 </script>
 </body>
